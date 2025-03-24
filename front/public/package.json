@@ -1,0 +1,12 @@
+{
+  "name": "fightboat-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for the Fightboat game",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve ."
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+} 

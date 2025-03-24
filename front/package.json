@@ -1,20 +1,20 @@
 {
-  "name": "battleship",
+  "name": "fightboat",
   "version": "1.0.0",
-  "description": "\"Hello World\"",
-  "main": "../front/electron/main.js",
+  "description": "Modern web-based fightboat game",
+  "main": "index.js",
   "scripts": {
-    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Matthew Petillo",
-  "license": "MIT",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "electron": "^32.1.0"
+    "electron": "^28.1.0"
   },
   "dependencies": {
-    "body-parser": "^1.20.3",
-    "express": "^4.21.0",
-    "socket.io": "^4.7.5"
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.4"
   }
 }

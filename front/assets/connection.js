@@ -1,48 +1,48 @@
 /* connection.js
-Description: The program that is used by all client html pages to initialize communication with the server based on the client configuration. Handles the server-client handshake.
+Description: Handles socket connection to the fightboat server
 Inputs: None
-Outputs: None
-Sources: node.js and sockets.io official documentation
+Outputs: Socket connection to server
+Sources: socket.io documentation
 Authors: William Johnson
-Creation date: 9-13-24
+Creation date: 9-11-24
 */
 
-// Uses loadConfig defined in main.js to load the config file and then uses its contents to initialize a handshake with the server.
-window.api.loadConfig()
-    .then(config => {
-        let serverAddress;
-        if (config.Build === "Dev") {
-            serverAddress = config.DevServerAddress;
-        } else {
-            serverAddress = config.LiveServerAddress;
-        }
+// Cloud server address
+const SERVER_URL = 'https://battleship-q6f4.onrender.com';
 
-        const script = document.createElement('script');
-        script.src = serverAddress + "/socket.io/socket.io.js";
+// Load Socket.IO from CDN
+const script = document.createElement('script');
+script.src = 'https://cdn.socket.io/4.7.4/socket.io.min.js';
 
-        script.onload = () => {
-            console.log("Socket.IO script loaded successfully from:", serverAddress);
+script.onload = () => {
+    console.log("Socket.IO script loaded successfully");
 
-            window.clientId = config.ClientId;
+    // Create socket connection
+    const socket = io(SERVER_URL, {
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+        transports: ['websocket']
+    });
 
-            const new_socket = io(serverAddress);
+    // Connection event handlers
+    socket.on('connect', () => {
+        console.log('Connected to fightboat server');
+        window.socket = socket;
+    });
 
-            // Server handshake request to register our client ID
-            new_socket.on('getClientId', () => {
-                new_socket.emit('registerClientId', { ClientId: config.ClientId });
-            });
+    socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
+    });
 
-            // Handshake completed, we can now expose the socket for use by the consuming html file.
-            new_socket.on('acknowledgeRegistration', ( data ) => {
-                window.socket = new_socket;
-            });
-        };
+    socket.on('disconnect', (reason) => {
+        console.log('Disconnected from fightboat server:', reason);
+    });
+};
 
-        script.onerror = () => {
-            console.error("Failed to load the Socket.IO script from:", serverAddress);
-        };
+script.onerror = () => {
+    console.error("Failed to load Socket.IO script");
+};
 
-        document.head.appendChild(script);
-    })
-    .catch(error => console.error("Error loading config.json:", error));
+document.head.appendChild(script);
     

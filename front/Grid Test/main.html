@@ -1,60 +1,55 @@
 <!-- main.html
-Description: 
-Inputs: 
-Outputs: 
-Sources: 
-Authors: Chase Curtis, William Johnson
-Creation date: 9-10-24
+Description: Main game screen for fightboat
+Inputs: None
+Outputs: Game interface with grid and controls
+Sources: HTML5 documentation
+Authors: William Johnson
+Creation date: 9-11-24
 -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"> <!-- character set that the page will use -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- viewport that the page will use -->
-    <title>Let's Play Battleship!</title> <!-- title of the page -->
-    <link rel="stylesheet" href="styles.css"> <!-- link to the stylesheet that the page -->
-    <script src="../assets/connection.js"></script> <!-- link to the connection.js file -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fightboat - Game Screen</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="../assets/connection.js"></script>
 </head>
 <body>
-    <h1>Battleship Game</h1> <!-- title of the page -->
+    <h1>Fightboat</h1>
 
-    <div id="setupControls"> <!-- setup controls for the game -->
-        <h2>Select a ship to place</h2> <!-- title of the section -->
-
-        <select id="shipSelect"> 
-        </select> <!-- dropdown menu for the ships -->
-   
-        <button id="toggleOrientation">Horizontal</button> <!-- button to toggle the orientation of the ship -->
-        <button id="removeShip">Remove Selected Ship</button> <!-- button to remove the selected ship -->
-        <button id="startGame" disabled>Ready!</button> <!-- button to start the game -->
+    <div id="setupControls">
+        <h2>Place Your Ships</h2>
+        <div class="controls-container">
+            <select id="shipSelect"></select>
+            <button id="toggleOrientation">Horizontal</button>
+            <button id="removeShip">Remove Selected Ship</button>
+            <button id="startGame" disabled>Ready!</button>
+        </div>
     </div>
 
-    <h2 id="waitingForAllPlayers" style="display: none;">Waiting for other player...</h2> <!-- waiting for other player to join the game -->
+    <h2 id="waitingForAllPlayers" style="display: none;">Waiting for opponent...</h2>
     
-    <br/>
-    <br/>
-
-    <div id="playerGridContainer"> <!-- container for the player's grid -->
-        <div id="grid"></div> <!-- grid for the player -->
+    <div id="playerGridContainer">
+        <div id="grid"></div>
     </div>
 
-    <h2 id="turnIndicatorLabel" style="display:none;">It's Your Turn!</h2> <!-- label for the turn indicator -->
-    <br>
-    <h3 id="gridHeader" style="display:none">Your Grid (left) | Opponent's Grid (right)</h3> <!-- header for the grids -->
-    <br/>
+    <h2 id="turnIndicatorLabel" style="display:none;">Your Turn!</h2>
+    
+    <h3 id="gridHeader" style="display:none">Your Fleet | Opponent's Waters</h3>
 
-    <div id="gameBoardContainer" style="display: none;"> <!-- container for the game board -->
-        <div id="playerBoard"></div> <!-- player's board -->
-        <div id="opponentBoard"></div> <!-- opponent's board -->
+    <div id="gameBoardContainer" style="display: none;">
+        <div id="playerBoard"></div>
+        <div id="opponentBoard"></div>
     </div>
 
-    <h3 id="statusLabel" style="display: none;">Status Label</h3> <!-- status label for the game -->
+    <h3 id="statusLabel" style="display: none;">Status: Waiting for opponent...</h3>
 
-    <div class="error-footer" id="errorFooter"> <!-- error footer for the page -->
-        <p id="errorLabel">Error: Something went wrong. Please try again later.</p> <!-- error label for the page -->
+    <div class="error-footer" id="errorFooter">
+        <p id="errorLabel">Error: Something went wrong. Please try again later.</p>
     </div>
 
-    <script src="script.js"></script> <!-- link to the script.js file -->
+    <script src="script.js"></script>
 </body>
 </html>

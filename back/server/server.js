@@ -15,14 +15,14 @@ Creation date: 9-10-24
     - http: For http communication
     - socket.io: For creating communication link between the server and clients
     - body-parser: for parsing incoming requests to the server
-    - BattleshipRound: The round manager for battleship gameplay. Controls shot attempts, ship location management, and player groupings.
+    - FightboatRound: The round manager for fightboat gameplay. Controls shot attempts, ship location management, and player groupings.
     - Match, generateUniqueId: The manager for match making and party grouping. Used to generate codes for sharing and linking players across clients.
 */
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const bodyParser = require('body-parser');
-const [ BattleshipRound ] = require('./modules/battleshipRound');
+const [ FightboatRound ] = require('./modules/fightboatRound');
 const [ Match, generateUniqueId ] = require('./modules/matchmaking')
 
 // Initializes the express application and starts hosting the server
@@ -157,7 +157,7 @@ io.on('connection', (socket) => {
         }
         //creates new round and places all players in that round
         try{        
-            const newRound = new BattleshipRound(socket.ClientId, party.numShips, party.gridDimensions);
+            const newRound = new FightboatRound(socket.ClientId, party.numShips, party.gridDimensions);
             const randomIndex = Math.floor(Math.random() * party.players.length);
             newRound.whosTurn = party.players[randomIndex];
             party.players.forEach(player => { //associates all players with the new round
@@ -276,5 +276,5 @@ io.on('connection', (socket) => {
 
 // Host the express server
 server.listen(port, localNetworkHost, () => {
-    console.log(`The BattleShip Server is now active on http://${localNetworkHost}:${port}`)
+    console.log(`The Fightboat Server is now active on http://${localNetworkHost}:${port}`)
 });
