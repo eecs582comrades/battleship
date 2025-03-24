@@ -1,96 +1,121 @@
-/* fightboatRound.js
-Description: Handles game logic and state management for fightboat rounds
+/* battleshipRound.js
+Description: Battleship Round module. Creates data structures for matches that keeps all necessary information required by server for a single game round
 Inputs: None
-Outputs: Game state and logic
-Sources: None
+Outputs: BattleshipRound
+Sources: 
 Authors: William Johnson
-Creation date: 9-11-24
+Creation date: 9-13-24
 */
 
-//data structure for a fightboat round
-class FightboatRound {
-    constructor() {
-        this.ships = [];
-        this.hits = [];
-        this.misses = [];
-        this.currentTurn = null;
-        this.gameOver = false;
-        this.winner = null;
-    }
-
-    // Add a ship to the round
-    addShip(ship) {
-        this.ships.push(ship);
-    }
-
-    // Process a hit attempt
-    processHit(x, y) {
-        // Check if the hit is valid
-        if (this.isValidHit(x, y)) {
-            // Check if the hit landed on a ship
-            const hitShip = this.findShipAt(x, y);
-            if (hitShip) {
-                this.hits.push({ x, y });
-                this.checkShipSunk(hitShip);
-                return { status: "Success", message: "Hit!" };
-            } else {
-                this.misses.push({ x, y });
-                return { status: "Success", message: "Miss!" };
+//For internal use - creates a map based off a given X, Y format.
+class Map {
+    //takes dimensions in [x, y] format
+    constructor(dimensions){
+        console.log(dimensions[0]);
+        this.Map = {};
+        this.Ships = {};
+        //creates an array based map
+        for (let i = 0; i < dimensions[0]; i++) {
+            const row = {};
+            for (let j = 0; j < dimensions[1]; j++) {
+                row[j] = { shipId: null, isHit: false };
             }
-        }
-        return { status: "Error", message: "Invalid hit location" };
-    }
-
-    // Check if a hit location is valid
-    isValidHit(x, y) {
-        return x >= 0 && x < 10 && y >= 0 && y < 10 &&
-               !this.hits.some(hit => hit.x === x && hit.y === y) &&
-               !this.misses.some(miss => miss.x === x && miss.y === y);
-    }
-
-    // Find a ship at the given coordinates
-    findShipAt(x, y) {
-        return this.ships.find(ship => 
-            ship.coordinates.some(coord => coord.x === x && coord.y === y)
-        );
-    }
-
-    // Check if a ship is sunk
-    checkShipSunk(ship) {
-        const shipHits = this.hits.filter(hit => 
-            ship.coordinates.some(coord => coord.x === hit.x && coord.y === hit.y)
-        );
-
-        if (shipHits.length === ship.coordinates.length) {
-            ship.sunk = true;
-            this.checkGameOver();
+            this.Map[i] = row;
         }
     }
-
-    // Check if the game is over
-    checkGameOver() {
-        if (this.ships.every(ship => ship.sunk)) {
-            this.gameOver = true;
-            this.winner = this.currentTurn;
-        }
-    }
-
-    // Set the current turn
-    setCurrentTurn(playerId) {
-        this.currentTurn = playerId;
-    }
-
-    // Get the current game state
-    getGameState() {
-        return {
-            ships: this.ships,
-            hits: this.hits,
-            misses: this.misses,
-            currentTurn: this.currentTurn,
-            gameOver: this.gameOver,
-            winner: this.winner
-        };
+    //adds ship part at x, y coordinates
+    addShip(shipId, shipDefinition){
+        this.Ships[shipId] = {}
+        this.Ships[shipId].Definition = shipDefinition;
+        this.Ships[shipId].IsSunk = false;
+        
+        shipDefinition.forEach(coordinate => { //coordinate should be an array, so runs through each
+            if (this.Map[coordinate.x] === undefined){
+                this.Map[coordinate.x] = {};
+            }
+            this.Map[coordinate.x][coordinate.y] = { shipId: shipId, isHit: false };
+        });
     }
 }
+//data structure for a battleship round
+class BattleshipRound {
+    //takes host clientId, num of ships, grid dimensions for Maps
+    constructor(host, numberOfShips, gridDimensions){
+        this.host = host;
+        this.players = [];
+        this.numberOfShips = numberOfShips;
+        this.maps = {};
+        this.guessHistory = {};
+        this.gridDimensions = gridDimensions;
+        this.whosTurn = null;
+        this.hasPlacedShips = {};
+    }
+    //adds player and attaches a map
+    addPlayer(clientId){
+        this.players.push(clientId);
+        this.maps[clientId] = new Map(this.gridDimensions);
+    }
+    //attempts to fire at a target
+    attemptFire(x, y, targetPlayer, sourcePlayer){
+        if (this.maps[targetPlayer] == undefined) { //no player
+            return [false, "UndefinedPlayer"];
+        } 
 
-module.exports = FightboatRound;
+        if (x < 0 || y < 0 || x >= this.gridDimensions || y >= this.gridDimensions){ //out of bounds
+            return [false, "BoundsRejection"];
+        }
+
+        if (!this.guessHistory[sourcePlayer]) { //if no guess history, make a new guest history
+            this.guessHistory[sourcePlayer] = [];
+        }
+
+        this.guessHistory[sourcePlayer].push({ targetPlayer: targetPlayer, x: x, y: y }); //add guess
+
+        const mapSquareData = this.maps[targetPlayer].Map[x][y]; //pulls a specific square from Map data struct
+
+        if (mapSquareData === undefined || mapSquareData.shipId === null || mapSquareData.shipId === undefined){ //checks to see if the space has not been hit and if there is no ship
+            mapSquareData.isHit = true;
+            return [false, "TrueMiss"];
+        }
+
+        const hitShipObject = this.maps[targetPlayer].Ships[mapSquareData.shipId];
+
+        if (hitShipObject === null || hitShipObject.IsSunk || mapSquareData.isHit){ //if bad guess
+            return [false, "InvalidGuess"];
+        }
+
+        // The ship was hit!
+        this.maps[targetPlayer].Map[x][y].isHit = true;
+
+        let isShipSunk = true;
+        hitShipObject.Definition.forEach(coordinate => { //checks to see if a ship was sunk
+            if (this.maps[targetPlayer].Map[coordinate.x][coordinate.y].isHit === false){
+                isShipSunk = false;
+            }
+        });
+
+        this.maps[targetPlayer].Ships[mapSquareData.shipId].IsSunk = isShipSunk;
+
+        if (isShipSunk){ //if it is sunk, check to see if the whole ship if sunk. if so, check win condition.
+            let didSourcePlayerWinGame = true;
+            for (let shipID in this.maps[targetPlayer].Ships) {
+                if (this.maps[targetPlayer].Ships.hasOwnProperty(shipID)) {
+                    let shipObject = this.maps[targetPlayer].Ships[shipID];
+                    if (shipObject.IsSunk === false){
+                        didSourcePlayerWinGame = false;
+                    }
+                }
+            }
+
+            if (didSourcePlayerWinGame){
+                return [true, "GameWin"]
+            }
+        }
+
+        return [true, "TrueHit", isShipSunk, hitShipObject]
+
+    }
+
+}
+
+module.exports = [ BattleshipRound ];
