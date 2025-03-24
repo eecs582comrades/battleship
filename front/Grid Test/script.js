@@ -10,7 +10,7 @@ Creation date: 9-9-24
 //details of the ships
 const ships = [
     { name: 'Carrier', length: 5, placed: false },
-    { name: 'Fightboat', length: 4, placed: false },
+    { name: 'Battleship', length: 4, placed: false },
     { name: 'Cruiser', length: 3, placed: false },
     { name: 'Submarine', length: 2, placed: false },
     { name: 'Destroyer', length: 1, placed: false }
@@ -25,7 +25,7 @@ let numShips = 0; //number of ships
 //store ship coordinates in objects
 const playerShips = {
     Carrier: [],
-    Fightboat: [],
+    Battleship: [],
     Cruiser: [],
     Submarine: [],
     Destroyer: []
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
         //adds the right amount of ship options to ./main.html
         function addShipOptions(){ 
             shipSelect.innerHTML = "";
-            options = ['<option value="Destroyer">Destroyer (1)</option>', '<option value="Submarine">Submarine (2)</option>', '<option value="Cruiser">Cruiser (3)</option>', '<option value="Fightboat">Fightboat (4)</option>', '<option value="Carrier">Carrier (5)</option>'];
+            options = ['<option value="Destroyer">Destroyer (1)</option>', '<option value="Submarine">Submarine (2)</option>', '<option value="Cruiser">Cruiser (3)</option>', '<option value="Battleship">Battleship (4)</option>', '<option value="Carrier">Carrier (5)</option>'];
             for (let i = 0; i < numShips; i++){ //adds ships to the selection
                 shipSelect.innerHTML += options[i];
             }

@@ -1,36 +1,10 @@
 {
-  "name": "fightboat",
-  "version": "1.0.0",
-  "description": "Modern web-based fightboat game",
-  "main": "index.js",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "Matthew Petillo",
-  "license": "MIT",
-  "dependencies": {
-    "next": "^14.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "socket.io-client": "^4.7.5",
-    "tailwindcss": "^3.4.1",
-    "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.35",
-    "body-parser": "^1.20.2",
-    "express": "^4.18.2",
-    "socket.io": "^4.7.4"
-  },
   "devDependencies": {
-    "@types/node": "^20.11.24",
-    "@types/react": "^18.2.61",
-    "typescript": "^5.3.3",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "^14.1.0",
-    "electron": "^28.1.0"
+  },
+  "scripts": {
+    "clean": "node ./scripts/update-client-id.js",
+    "postinstall": "node ./scripts/create-hook.js && cd ./front && npm install",
+    "play": "cd ./front && npm start",
+    "server": "cd ./back/server && npm ci && node ./server.js"
   }
 }

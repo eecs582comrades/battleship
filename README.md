@@ -1,5 +1,5 @@
-# Fightboat Game
-# How-To Run Fightboat
+# Battleship
+# How-To Run Battleship
 
 ## Set-Up
 Before doing anything else, ensure that you have done the following:
@@ -8,7 +8,7 @@ Before doing anything else, ensure that you have done the following:
 - Once this step completes successfully, you will be able to build, run, and test the game.
 
 
-This implementation of fightboat comes in two parts: The Server, and the Client.
+This implementation of battleship comes in two parts: The Server, and the Client.
 
 ## The Server
 The Server is the backend code that controls game state, match making, and player communications. Code for the Server can be found in the `back` and `back/server` folder. 
@@ -31,7 +31,7 @@ CONFIG SCRIPT: [config.json](./front/assets/config.json) | ./front/assets/config
 
 #### Testing Against Our Render Server:
 - Edit the Config Script
-- Set the "LiveServerAddress" value to "https://fightboat-q6f4.onrender.com"
+- Set the "LiveServerAddress" value to "https://battleship-q6f4.onrender.com"
 - Set the "Build" value to "Live"
 - Ensure that the "ClientId" value is set to `null`
 
@@ -74,5 +74,5 @@ If you have tested locally, the ClientID in the config file will have been modif
 - backend: Matthew, Wil
 - frontend: Katie, Emily, Chase
 ### Requirements:
-- frontend: Can be played either locally or online. need design for 10x10 grid, way to put fightboats, pull from backend, send states
+- frontend: Can be played either locally or online. need design for 10x10 grid, way to put battleships, pull from backend, send states
 - backend: control state, act as mediary, pass info about strikes
